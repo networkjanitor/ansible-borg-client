@@ -17,8 +17,8 @@
     minute: '{{ item.cron_minute | default("0") }}'
     hour: '{{ item.cron_hour | default("20") }}'
     day: '{{ item.cron_day | default("*") }}'
-    year: '{{ item.cron_year | default("*") }}'
-    year: '{{ item.cron_week | default("*") }}'
+    month: '{{ item.cron_month | default("*") }}'
+    weekday: '{{ item.cron_weekday | default("*") }}'
     state: present
   with_items: '{{ borg_backups }}'
 

@@ -16,6 +16,6 @@ export BORG_RSH="ssh -o IdentityFile={{ item.ssh_key_path }}"
 
 {% if item.prune %}
 borg prune {{ item.extended_prune_options }} --list $REPOSITORY --prefix {{ item.prefix }} \
-    --keep-daily= {{ item.keep_daily }} --keep-weekly= {{ item.keep_weekly }} --keep-monthly= {{ item.keep_monthly }}
+    --keep-daily {{ item.keep_daily }} --keep-weekly {{ item.keep_weekly }} --keep-monthly {{ item.keep_monthly }}
 {% endif %}
 
