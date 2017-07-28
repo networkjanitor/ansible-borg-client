@@ -1,0 +1,6 @@
+- hosts: all
+  vars_files:
+    - vars/main.yml
+  roles:
+    # requires you to have cloned the repository beforehand into ./roles/
+    - { role: borg } 

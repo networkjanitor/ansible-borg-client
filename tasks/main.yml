@@ -1,0 +1,27 @@
+---
+
+- name: Install borg-backup.
+  apt:
+    name: borgbackup
+    update_cache: yes
+  become: true
+
+- name: Install the borg backup script.
+  template: src="borg-backup-script.sh.j2" dest="~/borg-backup-script-{{ item.title }}.sh" mode=0700
+  with_items: '{{ borg_backups }}'
+
+- name: Install crontab.
+  cron:
+    name: 'borg backup: {{ item.title }}'
+    job: ~/borg-backup-script-{{ item.title | quote }}.sh 
+    minute: '{{ item.cron_minute | default("0") }}'
+    hour: '{{ item.cron_hour | default("20") }}'
+    day: '{{ item.cron_day | default("*") }}'
+    year: '{{ item.cron_year | default("*") }}'
+    year: '{{ item.cron_week | default("*") }}'
+    state: present
+  with_items: '{{ borg_backups }}'
+
+
+
+

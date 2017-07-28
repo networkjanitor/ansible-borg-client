@@ -1,0 +1,21 @@
+#!/bin/bash
+
+REPOSITORY={{ item.remote_user }}@{{ item.server }}:{{ item.repository }}
+{% if (item.encryption is defined and item.encryption == 'repokey') %}
+export BORG_PASSPHRASE={{ item.passphrase|quote }}
+{% endif %}
+
+export BORG_RSH="ssh -o IdentityFile={{ item.ssh_key_path }}"
+
+{{ borgbackup_executable_path | default('borg') }} create \
+    {{ item.extended_create_options|default(borgbackup_create_default_options) }} --stats \
+    $REPOSITORY::{{ item.prefix | default(ansible_hostname) }}-{{ item.name | default('`date +%Y-%m-%d`') }} \
+    {{ item.excludes|d([]) | length | ternary('--exclude', '') }} \
+    {{ item.excludes|d([]) | map('quote') | join (' --exclude ') }} \
+    {{ item.directories | join(' ') }}
+
+{% if item.prune %}
+borg prune {{ item.extended_prune_options }} --list $REPOSITORY --prefix {{ item.prefix }} \
+    --keep-daily= {{ item.keep_daily }} --keep-weekly= {{ item.keep_weekly }} --keep-monthly= {{ item.keep_monthly }}
+{% endif %}
+

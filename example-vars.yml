@@ -1,0 +1,35 @@
+---
+borg_backups:
+  - title: 'to-storage1'
+    server: 'storage1'
+    repository: '/mnt/storage/borg-repositories/internal-gitlab'
+    remote_user: 'borg'
+
+    ssh_key_path: '~/.ssh/id_rsa'
+
+    encryption: 'repokey'
+    # you can store passwords as plain text ...
+    passphrase: 'password'
+
+    # ... or you can be fancy with ansible versions >= 2.3 
+    # https://docs.ansible.com/ansible/latest/playbooks_vault.html#single-encrypted-variable
+    #
+    # Example:
+    # passphrase: !vault-encrypted |
+    #        $ANSIBLE_VAULT;1.1;AES256
+    #        <vault cipher text here>
+
+    prefix: '{{ ansible_hostname }}'
+    name: '`date +%Y-%m-%d`'
+    directories:
+      - '/synced_folders/'
+      - '/etc/gitlab'
+    excludes:
+      - '*.pyc'
+    extended_create_options: '-v --stats'
+
+    prune: true 
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+    extended_prune_options: '--stats'
